@@ -1,0 +1,51 @@
+.timeline {
+  
+  /* position: relative;  create reference to this */
+  position: relative; 
+  margin-top: 20px;
+  padding-left: 30px;
+}
+
+.timeline-item { 
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -30px;
+  top: 5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #333;
+}
+
+
+/* create | line */
+.timeline-item::before{
+  content: "";
+  position: absolute;
+  left: -25px;
+  top: 17px;
+  width: 2px;
+  height: calc(100% + 13px);
+  background: #ccc;
+}
+
+/* remove last item | line  */
+.timeline-item:last-child::before{
+  display: none;
+}
+
+.timeline-content {
+  padding: 15px;
+  border : 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
+.timeline-content h3 {
+  margin-top: 0;
+}
+
