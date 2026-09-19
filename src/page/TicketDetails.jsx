@@ -10,16 +10,33 @@ function TicketDetails() {
     const [newStatus, setNewStatus] = useState("");
     const [remark, setRemark] = useState("");
     const [file, setFile] = useState(null);
+    const [attachment, setAttachment] = useState(null)
 
 
     async function handleUpload() {
 
-        if(file) {
+        if(!file) {
             alert("Please select a file");
             return
         }
 
         const token = localStorage.getItem("token");
+
+        const formData = new FormData();
+
+        formData.append("marksheet", file);
+
+        const response = await axios.post(
+            `http://localhost:5200/api/tickets/${id}/attachment`,
+            formData,
+            {
+                headers: {
+                    Authorization : `Bearer ${token}`
+                }
+            }
+        );
+
+        console.log("Upload Response : ", response.data) 
     }
 
 
@@ -84,15 +101,31 @@ function TicketDetails() {
             setHistory(Response.data.history)
         })
 
+
+        //Attachment
+        axios.get(
+            `http://localhost:5200/api/tickets/${id}/attachment`,
+            {
+                headers : {
+                    Authorization : `Bearer ${token}`
+                }
+            }
+        ).then((response) => {
+            console.log("Attachment : ", response.data);
+            setAttachment(response.data);
+        });
     }, [id])
 
-    if(!ticket) {
-        return <p>Loading...</p>
-    }
+    
 
-    console.log("Ticket ID : ", id);
 
-    return (
+        if(!ticket) {
+            return <p>Loading...</p>
+        }
+
+            console.log("Ticket ID : ", id);
+
+        return (
 
         <div>
 
@@ -109,7 +142,7 @@ function TicketDetails() {
             <p>Correction Details : {ticket.correction_details} </p>
             <p>Status : {ticket.status} </p>
 
-            {/* Status=================================== */}
+            {/* Status========================= */}
             <div>
                 <label>Update Status : </label>
 
@@ -142,16 +175,30 @@ function TicketDetails() {
                 </div>
             )}
 
+
             {/* Attachment */}
             <h2>Attachment</h2>
             <input 
             type="file"
-            onChange={(e) => setFile(e.target.fil[0])}
+            onChange={(e) => setFile(e.target.files[0])}
             />
 
-            <button>
+            <button onClick={handleUpload}>
                 Upload
             </button>
+
+            {attachment && (
+                <div>
+                    <p>File Name : {attachment.file_name} </p>
+
+                    <img
+                        src={`http://localhost:5200/${attachment.file_path}`}
+                        alt = "Uploaded marksheet"
+                        rel="noreferrer"
+                        width= "400"
+                    />
+                </div>
+            )}
 
 
             {/* History box ==============================*/}
