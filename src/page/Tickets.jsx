@@ -9,8 +9,7 @@ function Tickets() {
     // =========================
 
     const [ticketNumber, setTicketNumber] = useState("");
-    const [studentName, setStudentName] = useState("");
-    const [rollNumber, setRollNumber] = useState("");
+    const [documentType, setDocumentType] = useState("");
     const [status, setStatus] = useState("");
 
 
@@ -77,8 +76,7 @@ function Tickets() {
                 // as query parameters
                 params: {
                     ticket_number: ticketNumber,
-                    student_name: studentName,
-                    roll_number: rollNumber,
+                    document_type : documentType,
                     status: status,
                     page: page,
                     limit: limit
@@ -102,11 +100,20 @@ function Tickets() {
     }, [
         page, searchTrigger
     ]);
-    
 
     return (
 
         <div>
+
+
+            <button onClick={() => navigate("/tickets/create")}>
+                Create Ticket
+            </button>
+
+            <button onClick={() => navigate("/completed-tickets")}>
+                Completed Tickets
+            </button>
+
 
             {/* =========================
                 Search and Filter UI
@@ -124,26 +131,11 @@ function Tickets() {
                     }
                 />
 
-
-                {/* Student Name */}
                 <input
                     type="text"
-                    placeholder="Student Name"
-                    value={studentName}
-                    onChange={(e) =>
-                        setStudentName(e.target.value)
-                    }
-                />
-
-
-                {/* Roll Number */}
-                <input
-                    type="text"
-                    placeholder="Roll Number"
-                    value={rollNumber}
-                    onChange={(e) =>
-                        setRollNumber(e.target.value)
-                    }
+                    placeholder="Document Type"
+                    value={documentType}
+                    onChange={(e) => setDocumentType(e.target.value)}
                 />
 
 
@@ -199,8 +191,6 @@ function Tickets() {
                     <tr>
                         <th>Ticket Number</th>
                         <th>Form Number</th>
-                        <th>Student Name</th>
-                        <th>Roll Number</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -222,14 +212,7 @@ function Tickets() {
                                 {ticket.form_number}
                             </td>
 
-                            <td>
-                                {ticket.student_name}
-                            </td>
-
-                            <td>
-                                {ticket.roll_number}
-                            </td>
-
+                            
                             <td>
                                 {ticket.status}
                             </td>

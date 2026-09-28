@@ -1,0 +1,138 @@
+    * {
+        box-sizing : border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .login-page {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background : #f4f7fb;
+    }
+
+    .login-card {
+        width: 400px;
+        padding: 40px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .login-header h1 {
+        margin: 0;
+        font-size: 32px;
+        color : #507ee2
+    }
+
+    .login-header p {
+        margin-top: 8px;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .input-group {
+        margin-bottom: 20px;
+    }
+
+    .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
+        font-size: 15px;
+        outline: none;
+    }
+
+    .input-group input:focus {
+        border-color: #6d90dd;
+    }
+
+    .login-button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 7px;
+        background: #6d90dd;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .login-button:hover{
+        background: #1d4ed8;
+    }
+
+    .login-button:disabled {
+        background: #93c5fd;
+        cursor: not-allowed;
+    }
+
+    .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+        border : 2px solid rgba(255, 255, 255, 0.5);
+        border-top-color : white;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        vertical-align: middle;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .password-input {
+        position: relative;
+    }
+
+    .password-input input{
+        padding-right: 70px;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translate(-50%);
+        border: none;
+        background: transparent;
+        color: #507ee2;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+
+    .login-error {
+        margin: -5px 0 15px;
+        padding: 10px 12px;
+        border-radius: 6px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        font-size: 14px;
+
+    }

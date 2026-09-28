@@ -8,9 +8,10 @@ function TicketDetails() {
     const [ticket, setTicket] = useState(null);
     const [history, setHistory] = useState([]);
     const [newStatus, setNewStatus] = useState("");
-    const [remark, setRemark] = useState("");
+    const [remark, setRemark] = useState("");   
     const [file, setFile] = useState(null);
-    const [attachment, setAttachment] = useState(null)
+    const [attachment, setAttachment] = useState(null);
+    const [userRole, setUserRole] = useState("");
 
 
     async function handleUpload() {
@@ -21,6 +22,7 @@ function TicketDetails() {
         }
 
         const token = localStorage.getItem("token");
+
 
         const formData = new FormData();
 
@@ -42,7 +44,18 @@ function TicketDetails() {
 
     async function handleStatusUpdate() {
 
+        if(!newStatus) {
+            alert("Please select status")
+            return;
+        }
+
+        if(newStatus === "CORRECTION_REQUIRED" && !remark.trim()) {
+            alert("Please enter remark")
+            return;
+        }
+
         const token = localStorage.getItem("token");
+
 
         const response = await axios.patch(
             `http://localhost:5200/api/tickets/${id}/status`,
@@ -63,11 +76,25 @@ function TicketDetails() {
             ...ticket,
             status : newStatus
         });
+
+        const historyResponse = await axios.get(
+            `http://localhost:5200/api/tickets/${id}/history`,{
+                headers : {
+                    Authorization : `Bearer ${token}`
+                }
+            }
+        );
+
+        setHistory(historyResponse.data.history);
+        setNewStatus("");
+        setRemark("")
     }
 
     useEffect(() => {
 
         const token = localStorage.getItem("token");
+        const user = JSON.parse(localStorage.getItem("user"));
+        setUserRole(user.role);
 
         // Ticket Detail API
         axios.get(
@@ -122,9 +149,7 @@ function TicketDetails() {
         if(!ticket) {
             return <p>Loading...</p>
         }
-
             console.log("Ticket ID : ", id);
-
         return (
 
         <div>
@@ -136,13 +161,12 @@ function TicketDetails() {
             <p>Ticket ID : {id} </p>
             <p>Ticket Number : {ticket.ticket_number} </p>
             <p>Form Number : {ticket.form_number} </p>
-            <p>Student Name : {ticket.student_name} </p>
-            <p>Roll Number : {ticket.roll_number} </p>
-            <p>Correction type : {ticket.correction_type} </p>
-            <p>Correction Details : {ticket.correction_details} </p>
-            <p>Status : {ticket.status} </p>
+            <p>Document Type : {ticket.document_type}</p>
 
             {/* Status========================= */}
+
+            {userRole === "OPERATOR" && (
+            
             <div>
                 <label>Update Status : </label>
 
@@ -150,6 +174,7 @@ function TicketDetails() {
                     value={newStatus}
                     onChange={(e) => setNewStatus(e.target.value)}
                     >
+                    <option></option>
                     <option>NEW</option>
                     <option>IN_PROGRESS</option>
                     <option>COMPLETED</option>
@@ -160,6 +185,7 @@ function TicketDetails() {
                     Update status
                 </button>
             </div>
+            )}
 
             {newStatus === "CORRECTION_REQUIRED" && (
                 <div>
@@ -174,6 +200,26 @@ function TicketDetails() {
 
                 </div>
             )}
+            <div>
+                        <h2>Corrections</h2>
+
+                        {ticket.corrections &&
+                            ticket.corrections.map((correction, index) => (
+
+                                <div key={correction.id}> 
+
+                                    <h3>
+                                        {index + 1}. {correction.correction_type}
+                                    </h3>
+                                    <p>
+                                        Details : {correction.correction_details}
+                                    </p>
+
+                                </div>
+                            ))
+                            }
+                                <p>Status : {ticket.status} </p>
+                            </div>
 
 
             {/* Attachment */}
@@ -227,12 +273,10 @@ function TicketDetails() {
                             <p>Remark : {item.remark} </p>
                     )}
 
+                        </div>                
                     </div>
-                    
-                </div>
-            ))}
-        </div>
-
+                ))}
+            </div>
         </div>
     );
 }

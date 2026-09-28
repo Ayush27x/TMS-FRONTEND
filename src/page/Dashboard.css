@@ -1,0 +1,374 @@
+* {
+    box-sizing: border-box;
+}
+
+
+/* =========================
+   DASHBOARD PAGE
+========================= */
+
+.dashboard-page {
+    min-height: 100vh;
+    padding: 30px;
+
+    background: #f4f7fb;
+}
+
+
+/* =========================
+   DASHBOARD HEADER
+========================= */
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 20px 28px;
+    margin-bottom: 35px;
+
+    border-radius: 14px;
+
+    background: linear-gradient(
+        135deg,
+        #507ee2,
+        #6d90dd
+    );
+
+    box-shadow: 0 8px 25px rgba(80, 126, 226, 0.25);
+}
+
+
+/* =========================
+   DASHBOARD TITLE
+========================= */
+
+.dashboard-title h1 {
+    margin: 0;
+
+    color: white;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.dashboard-title p {
+    margin: 5px 0 0;
+
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
+}
+
+
+/* =========================
+   DASHBOARD USER
+========================= */
+
+.dashboard-user {
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+}
+
+.user-details {
+    text-align: right;
+}
+
+.user-details p {
+    margin: 0;
+
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.user-details span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 12px;
+}
+
+
+/* =========================
+   LOGOUT BUTTON
+========================= */
+
+.logout-button {
+    padding: 8px 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 7px;
+
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+    background: white;
+    color: #507ee2;
+
+    transform: translateY(-2px);
+}
+
+.logout-button:active {
+    transform: scale(0.95);
+}
+
+.logout-button.logging-out {
+    background: white;
+    color: #507ee2;
+    transform: scale(0.95);
+    opacity: 0.8;
+    cursor: not-allowed;
+    animation: logoutPulse 0.7s ease;
+}
+
+@keyframes logoutPulse {
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(0.95);
+    }
+
+    70% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(0.95);
+    }
+}
+/* =========================
+   DASHBOARD WELCOME
+========================= */
+
+.dashboard-welcome {
+    margin-bottom: 25px;
+}
+
+.dashboard-welcome h2 {
+    margin: 0;
+
+    color: #1f2937;
+    font-size: 24px;
+}
+
+.dashboard-welcome p {
+    margin: 6px 0 0;
+
+    color: #6b7280;
+    font-size: 14px;
+}
+
+
+/* =========================
+   STAT CARDS
+========================= */
+
+.stats-container {
+    display: grid;
+
+    grid-template-columns: repeat(5, 1fr);
+
+    gap: 20px;
+}
+
+
+/* =========================
+   SINGLE STAT CARD
+========================= */
+
+.stat-card {
+    min-height: 180px;
+
+    padding: 25px;
+
+    background: white;
+
+    border-radius: 12px;
+
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================
+   CARD TITLE
+========================= */
+
+.stat-card h3 {
+    margin: 0;
+
+    color: #374151;
+
+    font-size: 16px;
+}
+
+
+/* =========================
+   CARD NUMBER
+========================= */
+
+.stat-card p {
+    margin: 25px 0 15px;
+
+    color: #507ee2;
+
+    font-size: 36px;
+    font-weight: 700;
+}
+
+
+/* =========================
+   CARD LINK
+========================= */
+
+.stat-card span {
+    color: #6b7280;
+
+    font-size: 13px;
+
+    transition: color 0.2s ease;
+}
+
+.stat-card:hover span {
+    color: #507ee2;
+}
+
+
+/* =========================
+   CREATE TICKET BUTTON
+========================= */
+
+.create-ticket-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    margin: 35px auto 0;
+
+    padding: 13px 28px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #507ee2;
+    color: white;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow: 0 6px 15px rgba(80, 126, 226, 0.25);
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.create-ticket-button:hover {
+    background: #3f6fd1;
+
+    transform: translateY(-3px);
+
+    box-shadow: 0 10px 20px rgba(80, 126, 226, 0.3);
+}
+
+.create-ticket-button:active {
+    transform: scale(0.96);
+}
+
+
+/* Ticket icon */
+
+.ticket-icon {
+    display: inline-block;
+
+    font-size: 18px;
+
+    transition: transform 0.3s ease;
+}
+
+
+/* Animation after clicking */
+
+.create-ticket-button.creating-ticket {
+    background: #3f6fd1;
+
+    pointer-events: none;
+
+    animation: buttonPulse 0.7s ease;
+}
+
+.create-ticket-button.creating-ticket .ticket-icon {
+    animation: ticketMove 0.7s ease;
+}
+
+
+@keyframes buttonPulse {
+
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.05);
+    }
+
+    70% {
+        transform: scale(0.97);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+}
+
+
+@keyframes ticketMove {
+
+    0% {
+        transform: translateX(0) rotate(0deg);
+    }
+
+    40% {
+        transform: translateX(5px) rotate(8deg);
+    }
+
+    70% {
+        transform: translateX(-3px) rotate(-5deg);
+    }
+
+    100% {
+        transform: translateX(0) rotate(0deg);
+    }
+
+}

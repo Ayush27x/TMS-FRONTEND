@@ -10,6 +10,8 @@ import Login from "./page/login";
 import Dashboard from "./page/Dashboard";
 import Tickets from "./page/Tickets";
 import TicketDetails from "./page/TicketDetails";
+import CreateTicket from "./page/CreateTicket";
+import CompletedTicket from "./page/CompletedTicket";
 
 
 function App() {
@@ -38,6 +40,16 @@ function App() {
         <Route
           path="/tickets/:id"
           element={<TicketDetails />}
+        />
+
+        <Route
+          path="/tickets/create"
+          element={<CreateTicket />}
+        />
+
+        <Route
+          path="/completed-tickets"
+          element={<CompletedTicket />}
         />
 
       </Routes>
