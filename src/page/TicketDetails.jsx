@@ -1,284 +1,872 @@
+// =============================
+// IMPORTS
+// =============================
+
 import axios from "axios";
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+    useNavigate,
+    useParams
+} from "react-router-dom";
+
+import "./TicketDetails.css";
+
+
+// =============================
+// TICKET DETAILS COMPONENT
+// =============================
 
 function TicketDetails() {
 
+    // Get ticket ID from URL
     const { id } = useParams();
+
+    // Navigation hook
+    const navigate = useNavigate();
+
+
+    // =============================
+    // STATE VARIABLES
+    // =============================
+
+    // Store complete ticket details
     const [ticket, setTicket] = useState(null);
+
+    // Store ticket history
     const [history, setHistory] = useState([]);
+
+    // Store selected new status
     const [newStatus, setNewStatus] = useState("");
-    const [remark, setRemark] = useState("");   
+
+    // Store correction remark
+    const [remark, setRemark] = useState("");
+
+    // Store selected marksheet file
     const [file, setFile] = useState(null);
+
+    // Store uploaded attachment details
     const [attachment, setAttachment] = useState(null);
+
+    // Store logged-in user's role
     const [userRole, setUserRole] = useState("");
 
+    // Status update loading state
+    const [updatingStatus, setUpdatingStatus] = useState(false);
+
+    // Success message
+    const [successMessage, setSuccessMessage] = useState("");
+
+    // Error message
+    const [errorMessage, setErrorMessage] = useState("");
+
+
+    // =============================
+    // HANDLE MARKSHEET UPLOAD
+    // =============================
 
     async function handleUpload() {
 
-        if(!file) {
+        // Check whether a file is selected
+        if (!file) {
             alert("Please select a file");
-            return
+            return;
         }
 
+        // Get JWT token from localStorage
         const token = localStorage.getItem("token");
 
 
+        // Create FormData for file upload
         const formData = new FormData();
 
+        // "marksheet" must match backend upload field name
         formData.append("marksheet", file);
 
+
+        // Send attachment to backend
         const response = await axios.post(
             `http://localhost:5200/api/tickets/${id}/attachment`,
             formData,
             {
                 headers: {
-                    Authorization : `Bearer ${token}`
+                    Authorization: `Bearer ${token}`
                 }
             }
         );
 
-        console.log("Upload Response : ", response.data) 
+
+        // Check upload response in console
+        console.log(
+            "Upload Response : ",
+            response.data
+        );
     }
 
+
+    // =============================
+    // HANDLE STATUS UPDATE
+    // =============================
 
     async function handleStatusUpdate() {
 
-        if(!newStatus) {
-            alert("Please select status")
+        // Clear previous messages
+        setSuccessMessage("");
+        setErrorMessage("");
+
+
+        // -----------------------------
+        // Validation
+        // -----------------------------
+
+        // Status is required
+        if (!newStatus) {
+            setErrorMessage("Please select status");
             return;
         }
 
-        if(newStatus === "CORRECTION_REQUIRED" && !remark.trim()) {
-            alert("Please enter remark")
+
+        // Remark is required when correction is requested
+        if (
+            newStatus === "CORRECTION_REQUIRED" &&
+            !remark.trim()
+        ) {
+            setErrorMessage("Please enter remark");
             return;
         }
 
-        const token = localStorage.getItem("token");
+
+        // Start loading state
+        setUpdatingStatus(true);
 
 
-        const response = await axios.patch(
-            `http://localhost:5200/api/tickets/${id}/status`,
-            {
-                status : newStatus,
-                remark : remark
-            },
-            {headers : {
-                Authorization : `Bearer ${token}`
-            }}
-        );
+        try {
 
-        console.log("Updated response : ", response.data)
+            // Get JWT token
+            const token = localStorage.getItem("token");
 
-        console.log("Selected status : ", newStatus);
 
-        setTicket({
-            ...ticket,
-            status : newStatus
-        });
+            // -----------------------------
+            // Update Status API
+            // -----------------------------
 
-        const historyResponse = await axios.get(
-            `http://localhost:5200/api/tickets/${id}/history`,{
-                headers : {
-                    Authorization : `Bearer ${token}`
+            await axios.patch(
+                `http://localhost:5200/api/tickets/${id}/status`,
+                {
+                    status: newStatus,
+                    remark: remark
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
-            }
-        );
+            );
 
-        setHistory(historyResponse.data.history);
-        setNewStatus("");
-        setRemark("")
+
+            // -----------------------------
+            // Show Success Message
+            // -----------------------------
+
+            setSuccessMessage(
+                "Ticket status updated successfully"
+            );
+
+
+            // Wait for 1 second
+            await new Promise((resolve) => {
+                setTimeout(resolve, 1000);
+            });
+
+
+            // Redirect to Tickets page
+            navigate("/tickets");
+
+        } catch (error) {
+
+            // Log API error
+            console.log(
+                "Status Update Error:",
+                error
+            );
+
+
+            // Show backend error message
+            setErrorMessage(
+                error.response?.data?.message ||
+                "Failed to update ticket status"
+            );
+
+
+            // Stop loading state
+            setUpdatingStatus(false);
+        }
     }
+
+
+    // =============================
+    // FETCH TICKET DATA
+    // =============================
 
     useEffect(() => {
 
+        // Get JWT token
         const token = localStorage.getItem("token");
-        const user = JSON.parse(localStorage.getItem("user"));
+
+        // Get logged-in user information
+        const user = JSON.parse(
+            localStorage.getItem("user")
+        );
+
+
+        // Store user's role
         setUserRole(user.role);
 
-        // Ticket Detail API
+
+        // =============================
+        // TICKET DETAIL API
+        // =============================
+
         axios.get(
             `http://localhost:5200/api/tickets/${id}`,
             {
-                headers : {
-                    Authorization : `Bearer ${token}`
+                headers: {
+                    Authorization: `Bearer ${token}`
                 }
             }
-
         )
-        .then((Response) => {
-            console.log(Response.data);
+            .then((response) => {
 
-            setTicket(Response.data);
+                console.log(
+                    "Ticket Response : ",
+                    response.data
+                );
 
-        })
+                // Store ticket details
+                setTicket(response.data);
+            });
 
-        // History API
+
+        // =============================
+        // TICKET HISTORY API
+        // =============================
+
         axios.get(
             `http://localhost:5200/api/tickets/${id}/history`,
             {
-                headers : {
-                    Authorization : `Bearer ${token}`
+                headers: {
+                    Authorization: `Bearer ${token}`
                 }
             }
         )
-        .then((Response) => {
-            console.log("History response : ",Response.data);
+            .then((response) => {
 
-            setHistory(Response.data.history)
-        })
+                console.log(
+                    "History Response : ",
+                    response.data
+                );
+
+                // Store ticket history
+                setHistory(response.data.history);
+            });
 
 
-        //Attachment
+        // =============================
+        // ATTACHMENT API
+        // =============================
+
         axios.get(
             `http://localhost:5200/api/tickets/${id}/attachment`,
             {
-                headers : {
-                    Authorization : `Bearer ${token}`
+                headers: {
+                    Authorization: `Bearer ${token}`
                 }
             }
-        ).then((response) => {
-            console.log("Attachment : ", response.data);
-            setAttachment(response.data);
-        });
-    }, [id])
+        )
+            .then((response) => {
 
-    
+                console.log(
+                    "Attachment : ",
+                    response.data
+                );
 
+                // Store attachment information
+                setAttachment(response.data);
+            });
 
-        if(!ticket) {
-            return <p>Loading...</p>
-        }
-            console.log("Ticket ID : ", id);
-        return (
-
-        <div>
+    }, [id]);
 
 
-            {/* Ticket details box =======================*/}
-            <h1>Ticket details</h1>
+    // =============================
+    // LOADING STATE
+    // =============================
 
-            <p>Ticket ID : {id} </p>
-            <p>Ticket Number : {ticket.ticket_number} </p>
-            <p>Form Number : {ticket.form_number} </p>
-            <p>Document Type : {ticket.document_type}</p>
+    if (!ticket) {
+        return <p>Loading...</p>;
+    }
 
-            {/* Status========================= */}
 
-            {userRole === "OPERATOR" && (
-            
-            <div>
-                <label>Update Status : </label>
+    // Check ticket ID in console
+    console.log("Ticket ID : ", id);
 
-                    <select
-                    value={newStatus}
-                    onChange={(e) => setNewStatus(e.target.value)}
+
+    // =============================
+    // JSX
+    // =============================
+
+    return (
+
+        <div className="ticket-details-page">
+
+
+            {/* =================================
+                HEADER
+            ================================= */}
+
+            <div className="ticket-details-header">
+
+                <div className="ticket-header-left">
+
+                    {/* Back Button */}
+                    <button
+                        className="back-button"
+                        onClick={() => window.history.back()}
                     >
-                    <option></option>
-                    <option>NEW</option>
-                    <option>IN_PROGRESS</option>
-                    <option>COMPLETED</option>
-                    <option>CORRECTION_REQUIRED</option>
-                </select>
+                        ← Back
+                    </button>
 
-                <button onClick={handleStatusUpdate}>
-                    Update status
-                </button>
-            </div>
-            )}
 
-            {newStatus === "CORRECTION_REQUIRED" && (
-                <div>
-                    <label >Remark</label>
+                    {/* Page Title */}
+                    <div>
 
-                    <textarea
-                    value={remark}
-                    onChange={(e) => setRemark(e.target.value)}
-                    placeholder="Enter correction required"
-                    required
-                    ></textarea>
+                        <h1>
+                            Ticket Details
+                        </h1>
+
+                        <p>
+                            Ticket #{ticket.ticket_number}
+                        </p>
+
+                    </div>
 
                 </div>
-            )}
-            <div>
-                        <h2>Corrections</h2>
 
-                        {ticket.corrections &&
-                            ticket.corrections.map((correction, index) => (
 
-                                <div key={correction.id}> 
+                {/* Current Ticket Status */}
+                <div
+                    className={`status-badge ${ticket.status.toLowerCase()}`}
+                >
+                    {ticket.status}
+                </div>
 
-                                    <h3>
-                                        {index + 1}. {correction.correction_type}
-                                    </h3>
-                                    <p>
-                                        Details : {correction.correction_details}
-                                    </p>
+            </div>
 
-                                </div>
-                            ))
-                            }
-                                <p>Status : {ticket.status} </p>
+
+            {/* =================================
+                MAIN CONTAINER
+            ================================= */}
+
+            <div className="ticket-details-container">
+
+
+                {/* =================================
+                    TICKET INFORMATION
+                ================================= */}
+
+                <div className="ticket-section">
+
+                    <h2>
+                        Ticket Information
+                    </h2>
+
+
+                    <div className="ticket-info-grid">
+
+
+                        {/* Ticket ID */}
+                        <div className="info-item">
+
+                            <span>
+                                Ticket ID
+                            </span>
+
+                            <strong>
+                                {ticket.id}
+                            </strong>
+
+                        </div>
+
+
+                        {/* Ticket Number */}
+                        <div className="info-item">
+
+                            <span>
+                                Ticket Number
+                            </span>
+
+                            <strong>
+                                {ticket.ticket_number}
+                            </strong>
+
+                        </div>
+
+
+                        {/* Form Number */}
+                        <div className="info-item">
+
+                            <span>
+                                Form Number
+                            </span>
+
+                            <strong>
+                                {ticket.form_number}
+                            </strong>
+
+                        </div>
+
+
+                        {/* Document Type */}
+                        <div className="info-item">
+
+                            <span>
+                                Document Type
+                            </span>
+
+                            <strong>
+                                {ticket.document_type}
+                            </strong>
+
+                        </div>
+
+
+                        {/* Created Date */}
+                        <div className="info-item">
+
+                            <span>
+                                Created At
+                            </span>
+
+                            <strong>
+                                {ticket.created_at}
+                            </strong>
+
+                        </div>
+
+
+                        {/* Last Updated Date */}
+                        <div className="info-item">
+
+                            <span>
+                                Last Updated
+                            </span>
+
+                            <strong>
+                                {ticket.updated_at}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {/* =================================
+                    STATUS UPDATE
+                    Only visible to OPERATOR
+                ================================= */}
+
+                {userRole === "OPERATOR" && (
+
+                    <div className="ticket-section">
+
+                        <h2>
+                            Update Ticket Status
+                        </h2>
+
+
+                        {/* Success Message */}
+                        {successMessage && (
+
+                            <div className="success-message">
+
+                                ✓ {successMessage}
+
+                            </div>
+
+                        )}
+
+
+                        {/* Error Message */}
+                        {errorMessage && (
+
+                            <div className="error-message">
+
+                                ⚠ {errorMessage}
+
+                            </div>
+
+                        )}
+
+
+                        <div className="status-update-form">
+
+
+                            {/* Status Dropdown */}
+                            <div className="form-group">
+
+                                <label>
+                                    Status
+                                </label>
+
+
+                                <select
+                                    value={newStatus}
+                                    onChange={(e) =>
+                                        setNewStatus(
+                                            e.target.value
+                                        )
+                                    }
+                                >
+
+                                    <option value="">
+                                        Select Status
+                                    </option>
+
+
+                                    <option value="NEW">
+                                        NEW
+                                    </option>
+
+
+                                    <option value="IN_PROGRESS">
+                                        IN PROGRESS
+                                    </option>
+
+
+                                    <option value="COMPLETED">
+                                        COMPLETED
+                                    </option>
+
+
+                                    <option value="CORRECTION_REQUIRED">
+                                        CORRECTION REQUIRED
+                                    </option>
+
+                                </select>
+
                             </div>
 
 
-            {/* Attachment */}
-            <h2>Attachment</h2>
-            <input 
-            type="file"
-            onChange={(e) => setFile(e.target.files[0])}
-            />
+                            {/* Correction Remark */}
+                            {newStatus === "CORRECTION_REQUIRED" && (
 
-            <button onClick={handleUpload}>
-                Upload
-            </button>
+                                <div className="form-group">
 
-            {attachment && (
-                <div>
-                    <p>File Name : {attachment.file_name} </p>
-
-                    <img
-                        src={`http://localhost:5200/${attachment.file_path}`}
-                        alt = "Uploaded marksheet"
-                        rel="noreferrer"
-                        width= "400"
-                    />
-                </div>
-            )}
+                                    <label>
+                                        Remark
+                                    </label>
 
 
-            {/* History box ==============================*/}
-            <h2>Ticket History</h2> 
-            {/*  owl timeline */}
-            <div className = "timeline">
+                                    <textarea
+                                        value={remark}
+                                        onChange={(e) =>
+                                            setRemark(
+                                                e.target.value
+                                            )
+                                        }
+                                        placeholder="Enter correction remark"
+                                    />
 
-            {history.map((item) => (
+                                </div>
 
-                // a history recode (timeline-item)
-                <div className = "timeline-item" key={item.id}>
+                            )}
 
-                    {/* dot and | before :: */}
-                    <div className="timeline-dot"></div>
 
-                    {/* History box */}
-                    <div className="timeline-content">
+                            {/* Update Status Button */}
+                            <button
+                                className="update-status-button"
+                                onClick={handleStatusUpdate}
+                                disabled={updatingStatus}
+                            >
 
-                    <p> {item.old_status} → {item.new_status}  </p>
-                    <p>Action : {item.action} </p>
-                    <p>Changed By : {item.changed_by}</p>
-                    <p>Date : {item.created_at} </p>
+                                {updatingStatus
+                                    ? "Updating..."
+                                    : "Update Status"
+                                }
 
-                        {item.remark && (
+                            </button>
 
-                            <p>Remark : {item.remark} </p>
+                        </div>
+
+                    </div>
+
+                )}
+
+
+                {/* =================================
+                    CORRECTIONS
+                ================================= */}
+
+                <div className="ticket-section">
+
+                    <h2>
+                        Corrections
+                    </h2>
+
+
+                    {ticket.corrections &&
+                    ticket.corrections.length > 0 ? (
+
+                        <div className="corrections-list">
+
+                            {ticket.corrections.map(
+                                (correction, index) => (
+
+                                    <div
+                                        className="detail-correction-card"
+                                        key={correction.id}
+                                    >
+
+
+                                        {/* Correction Number */}
+                                        <div className="correction-number">
+
+                                            {index + 1}
+
+                                        </div>
+
+
+                                        {/* Correction Details */}
+                                        <div className="correction-content">
+
+                                            <h3>
+                                                {correction.correction_type}
+                                            </h3>
+
+                                            <p>
+                                                {correction.correction_details}
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                )
+                            )}
+
+                        </div>
+
+                    ) : (
+
+                        <p className="empty-message">
+                            No corrections found.
+                        </p>
+
                     )}
 
-                        </div>                
-                    </div>
-                ))}
+                </div>
+
+
+                {/* =================================
+                    MARKSHEET / ATTACHMENT
+                ================================= */}
+
+                <div className="ticket-section">
+
+                    <h2>
+                        Marksheet
+                    </h2>
+
+
+                    {/* 
+                        Only OPERATOR can upload.
+                        UNIVERSITY can only view the attachment.
+                    */}
+
+                    {userRole === "OPERATOR" && (
+
+                        <div className="attachment-upload">
+
+                            {/* File Selection */}
+                            <input
+                                type="file"
+                                accept="image/png, image/jpeg"
+                                onChange={(e) =>
+                                    setFile(
+                                        e.target.files[0]
+                                    )
+                                }
+                            />
+
+
+                            {/* Upload Button */}
+                            <button
+                                className="upload-button"
+                                onClick={handleUpload}
+                            >
+                                Upload
+                            </button>
+
+                        </div>
+
+                    )}
+
+
+                    {/* Display Uploaded Marksheet */}
+                    {attachment ? (
+
+                        <div className="attachment-preview">
+
+                            <p>
+
+                                <strong>
+                                    File:
+                                </strong>{" "}
+
+                                {attachment.file_name}
+
+                            </p>
+
+
+                            <img
+                                src={`http://localhost:5200/${attachment.file_path}`}
+                                alt="Uploaded marksheet"
+                            />
+
+                        </div>
+
+                    ) : (
+
+                        <p className="empty-message">
+                            No marksheet uploaded.
+                        </p>
+
+                    )}
+
+                </div>
+
+
+                {/* =================================
+                    TICKET HISTORY
+                ================================= */}
+
+                <div className="ticket-section">
+
+                    <h2>
+                        Ticket History
+                    </h2>
+
+
+                    {history.length > 0 ? (
+
+                        <div className="timeline">
+
+                            {history.map((item) => (
+
+                                <div
+                                    className="timeline-item"
+                                    key={item.id}
+                                >
+
+
+                                    {/* Timeline Dot */}
+                                    <div className="timeline-dot"></div>
+
+
+                                    {/* Timeline Content */}
+                                    <div className="timeline-content">
+
+
+                                        {/* Status Change */}
+                                        <div className="timeline-status">
+
+                                            {item.old_status}
+
+                                            {" → "}
+
+                                            {item.new_status}
+
+                                        </div>
+
+
+                                        {/* Action */}
+                                        <p>
+
+                                            <strong>
+                                                Action:
+                                            </strong>{" "}
+
+                                            {item.action}
+
+                                        </p>
+
+
+                                        {/* Changed By */}
+                                        <p>
+
+                                            <strong>
+                                                Changed By:
+                                            </strong>{" "}
+
+                                            {item.changed_by}
+
+                                        </p>
+
+
+                                        {/* Date */}
+                                        <p>
+
+                                            <strong>
+                                                Date:
+                                            </strong>{" "}
+
+                                            {item.created_at}
+
+                                        </p>
+
+
+                                        {/* Remark */}
+                                        {item.remark && (
+
+                                            <p>
+
+                                                <strong>
+                                                    Remark:
+                                                </strong>{" "}
+
+                                                {item.remark}
+
+                                            </p>
+
+                                        )}
+
+                                    </div>
+
+                                </div>
+
+                            ))}
+
+                        </div>
+
+                    ) : (
+
+                        <p className="empty-message">
+                            No history available.
+                        </p>
+
+                    )}
+
+                </div>
+
             </div>
+
         </div>
     );
 }
+
+
+// =============================
+// EXPORT COMPONENT
+// =============================
 
 export default TicketDetails;
