@@ -238,20 +238,16 @@ function handleAddCorrection() {
                             Select Document Type
                         </option>
 
-                        <option value="EXAM_FORM">
-                            Exam Form
-                        </option>
-
-                        <option value="RESULT">
-                            Result
-                        </option>
-
-                        <option value="ADMIT_CARD">
-                            Admit Card
-                        </option>
-
                         <option value="MARKSHEET">
                             Marksheet
+                        </option>
+
+                        <option value="PROVISIONAL">
+                            Provisional
+                        </option>
+
+                        <option value="MIGRATION">
+                            Migration
                         </option>
 
                         <option value="OTHER">

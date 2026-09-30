@@ -3,13 +3,20 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
+
 function Dashboard() {
+
+    // ================================
+    // STATE
+    // ================================
 
     const [stats, setStats] = useState({});
     const [user, setUser] = useState({});
     const [creatingTicket, setCreatingTicket] = useState(false);
     const [loggingOut, setLoggingOut] = useState(false);
 
+
+    // Animated statistics
     const [animatedStats, setAnimatedStats] = useState({
         TOTAL: 0,
         NEW: 0,
@@ -18,68 +25,102 @@ function Dashboard() {
         CORRECTION_REQUIRED: 0
     });
 
+
+    // React Router navigation
     const navigate = useNavigate();
 
 
-    // Create Ticket
+    // ================================
+    // CREATE TICKET
+    // ================================
+
     function handleCreateTicket() {
 
         setCreatingTicket(true);
 
         setTimeout(() => {
+
             navigate("/tickets/create");
+
         }, 700);
     }
 
 
-    // Total Tickets
+    // ================================
+    // TOTAL TICKETS
+    // ================================
+
     function handleTotalTickets() {
+
         navigate("/tickets");
     }
 
 
-    // New Tickets
+    // ================================
+    // NEW TICKETS
+    // ================================
+
     function handleNewTickets() {
+
         navigate("/tickets?status=NEW");
     }
 
 
-    // In Progress Tickets
+    // ================================
+    // IN PROGRESS TICKETS
+    // ================================
+
     function handleInProgress() {
+
         navigate("/tickets?status=IN_PROGRESS");
     }
 
 
-    // Completed Tickets
+    // ================================
+    // COMPLETED TICKETS
+    // ================================
+
     function handleCompleted() {
+
         navigate("/completed-tickets");
     }
 
 
-    // Correction Required Tickets
+    // ================================
+    // CORRECTION REQUIRED
+    // ================================
+
     function handleCorrectionRequired() {
-        navigate("/tickets?status=CORRECTION_REQUIRED");
+
+        navigate(
+            "/tickets?status=CORRECTION_REQUIRED"
+        );
     }
 
 
-    // Logout
+    // ================================
+    // LOGOUT
+    // ================================
+
     function handleLogout() {
-        
+
         setLoggingOut(true);
 
         setTimeout(() => {
-            
+
             localStorage.removeItem("token");
-        localStorage.removeItem("user");
+            localStorage.removeItem("user");
 
-        navigate("/login");
-        })
+            navigate("/login");
 
-        
+        }, 700);
     }
 
 
-    // Number Animation
+    // ================================
+    // NUMBER ANIMATION
+    // ================================
+
     function animateNumber(key, target) {
 
         let current = 0;
@@ -89,11 +130,16 @@ function Dashboard() {
             current += 1;
 
             setAnimatedStats((previous) => ({
+
                 ...previous,
+
                 [key]: current
+
             }));
 
+
             if (current >= target) {
+
                 clearInterval(interval);
             }
 
@@ -101,62 +147,96 @@ function Dashboard() {
     }
 
 
-    // Dashboard data load
+    // ================================
+    // DASHBOARD DATA LOAD
+    // ================================
+
     useEffect(() => {
 
         console.log("Dashboard open");
 
+
+        // Get JWT token
         const token = localStorage.getItem("token");
 
+
+        // Get logged-in user
         const storedUser = JSON.parse(
             localStorage.getItem("user")
         );
 
-        setUser(storedUser);
+
+        // Store user information
+        setUser(storedUser || {});
+
 
         console.log("Token : ", token);
 
+
+        // ================================
+        // GET TICKET STATISTICS
+        // ================================
 
         axios.get(
             "http://localhost:5200/api/tickets/stats",
             {
                 headers: {
-                    Authorization: `Bearer ${token}`
+
+                    Authorization:
+                        `Bearer ${token}`
+
                 }
             }
         )
+
         .then((response) => {
 
-            console.log("Stats : ", response.data);
+            console.log(
+                "Stats : ",
+                response.data
+            );
 
+
+            // Store statistics
             setStats(response.data);
 
+
+            // Animate total tickets
             animateNumber(
                 "TOTAL",
                 response.data.TOTAL || 0
             );
 
+
+            // Animate new tickets
             animateNumber(
                 "NEW",
                 response.data.NEW || 0
             );
 
+
+            // Animate in-progress tickets
             animateNumber(
                 "PROGRESS",
                 response.data.PROGRESS || 0
             );
 
+
+            // Animate completed tickets
             animateNumber(
                 "COMPLETED",
                 response.data.COMPLETED || 0
             );
 
+
+            // Animate correction required tickets
             animateNumber(
                 "CORRECTION_REQUIRED",
                 response.data.CORRECTION_REQUIRED || 0
             );
 
         })
+
         .catch((error) => {
 
             console.log(
@@ -169,18 +249,29 @@ function Dashboard() {
     }, []);
 
 
+    // ================================
+    // JSX
+    // ================================
+
     return (
 
         <div className="dashboard-page">
 
 
-            {/* ================= HEADER ================= */}
+            {/* =================================
+                HEADER
+            ================================= */}
 
             <div className="dashboard-header">
 
+
+                {/* Dashboard Title */}
+
                 <div className="dashboard-title">
 
-                    <h1>Ticket Management System</h1>
+                    <h1>
+                        Ticket Management System
+                    </h1>
 
                     <p>
                         
@@ -189,7 +280,10 @@ function Dashboard() {
                 </div>
 
 
+                {/* User Information */}
+
                 <div className="dashboard-user">
+
 
                     <div className="user-details">
 
@@ -204,14 +298,23 @@ function Dashboard() {
                     </div>
 
 
+                    {/* Logout Button */}
+
                     <button
                         className={`logout-button ${
-                        loggingOut ? "logging-out" : ""
-                            }`}
+                            loggingOut
+                                ? "logging-out"
+                                : ""
+                        }`}
                         onClick={handleLogout}
                         disabled={loggingOut}
-                        >
-                            {loggingOut ? "Logging out..." : "Logout"}
+                    >
+
+                        {loggingOut
+                            ? "Logging out..."
+                            : "Logout"
+                        }
+
                     </button>
 
                 </div>
@@ -219,7 +322,9 @@ function Dashboard() {
             </div>
 
 
-            {/* ================= DASHBOARD TITLE ================= */}
+            {/* =================================
+                DASHBOARD TITLE
+            ================================= */}
 
             <div className="dashboard-welcome">
 
@@ -230,12 +335,16 @@ function Dashboard() {
             </div>
 
 
-            {/* ================= STAT CARDS ================= */}
+            {/* =================================
+                STAT CARDS
+            ================================= */}
 
             <div className="stats-container">
 
 
-                {/* TOTAL TICKETS */}
+                {/* =================================
+                    TOTAL TICKETS
+                ================================= */}
 
                 <div
                     className="stat-card"
@@ -257,7 +366,9 @@ function Dashboard() {
                 </div>
 
 
-                {/* NEW TICKETS */}
+                {/* =================================
+                    NEW TICKETS
+                ================================= */}
 
                 <div
                     className="stat-card"
@@ -279,7 +390,9 @@ function Dashboard() {
                 </div>
 
 
-                {/* IN PROGRESS TICKETS */}
+                {/* =================================
+                    IN PROGRESS TICKETS
+                ================================= */}
 
                 <div
                     className="stat-card"
@@ -301,7 +414,9 @@ function Dashboard() {
                 </div>
 
 
-                {/* COMPLETED TICKETS */}
+                {/* =================================
+                    COMPLETED TICKETS
+                ================================= */}
 
                 <div
                     className="stat-card"
@@ -323,7 +438,9 @@ function Dashboard() {
                 </div>
 
 
-                {/* CORRECTION REQUIRED */}
+                {/* =================================
+                    CORRECTION REQUIRED
+                ================================= */}
 
                 <div
                     className="stat-card"
@@ -347,32 +464,44 @@ function Dashboard() {
             </div>
 
 
-            {/* ================= CREATE TICKET ================= */}
+            {/* =================================
+                CREATE TICKET
+                UNIVERSITY ONLY
+            ================================= */}
 
-            <button
-                className={`create-ticket-button ${
-                    creatingTicket ? "creating-ticket" : ""
-                }`}
-                onClick={handleCreateTicket}
-                disabled={creatingTicket}
-            >
+            {user.role === "UNIVERSITY" && (
 
-                <span className="ticket-icon">
-                    🎫
-                </span>
+                <button
+                    className={`create-ticket-button ${
+                        creatingTicket
+                            ? "creating-ticket"
+                            : ""
+                    }`}
+                    onClick={handleCreateTicket}
+                    disabled={creatingTicket}
+                >
 
-                <span>
-                    {creatingTicket
-                        ? "Opening..."
-                        : "Create Ticket"
-                    }
-                </span>
+                    <span className="ticket-icon">
+                        🎫
+                    </span>
 
-            </button>
+                    <span>
+
+                        {creatingTicket
+                            ? "Opening..."
+                            : "Create Ticket"
+                        }
+
+                    </span>
+
+                </button>
+
+            )}
 
 
         </div>
     );
 }
+
 
 export default Dashboard;

@@ -61,6 +61,22 @@ function TicketDetails() {
 
 
     // =============================
+// FORMAT DATE & TIME
+// =============================
+
+function formatDateTime(dateTime) {
+    return new Date(dateTime).toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
+}
+
+
+    // =============================
     // HANDLE MARKSHEET UPLOAD
     // =============================
 
@@ -333,6 +349,12 @@ function TicketDetails() {
                     >
                         ← Back
                     </button>
+                    <button
+                        className="back-button"
+                        onClick={(() => navigate("/dashboard"))}
+                    >
+                        Dashboard
+                    </button>
 
 
                     {/* Page Title */}
@@ -441,29 +463,17 @@ function TicketDetails() {
                         {/* Created Date */}
                         <div className="info-item">
 
-                            <span>
-                                Created At
-                            </span>
-
-                            <strong>
-                                {ticket.created_at}
-                            </strong>
-
+                            <span>Created At</span>
+                                
+                                <strong>{formatDateTime(ticket.created_at)}</strong>
                         </div>
 
 
                         {/* Last Updated Date */}
                         <div className="info-item">
-
-                            <span>
-                                Last Updated
-                            </span>
-
-                            <strong>
-                                {ticket.updated_at}
-                            </strong>
-
-                        </div>
+    <span>Last Updated</span>
+    <strong>{formatDateTime(ticket.updated_at)}</strong>
+</div>
 
                     </div>
 
