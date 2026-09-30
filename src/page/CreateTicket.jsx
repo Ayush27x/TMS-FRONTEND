@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./CreateTicket.css"
+import "./CreateTicket.css";
 
 function CreateTicket() {
 
@@ -9,14 +9,14 @@ function CreateTicket() {
 
     const [formNumber, setFormNumber] = useState("");
     const [documentType, setDocumentType] = useState("");
-    const [correctionType, setCorrectionType] = useState("")
+    const [correctionType, setCorrectionType] = useState("");
     const [corrections, setCorrection] = useState([]);
     const [correctionDetails, setCorrectionDetails] = useState("");
     const [file, setFile] = useState(null);
     const [editingIndex, setEditingIndex] = useState(null);
     const [creatingTicket, setCreatingTicket] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
-    const [errMessage, setErrorMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
 
     async function handleCreateTicket() {
