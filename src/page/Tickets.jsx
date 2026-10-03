@@ -370,6 +370,12 @@ function Tickets() {
                             Correction Required
                         </option>
 
+                        <option value="REOPENED">
+                            Reopened
+                        </option>
+
+
+
                     </select>
 
                 </div>

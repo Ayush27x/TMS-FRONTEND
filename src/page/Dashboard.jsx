@@ -22,7 +22,8 @@ function Dashboard() {
         NEW: 0,
         PROGRESS: 0,
         COMPLETED: 0,
-        CORRECTION_REQUIRED: 0
+        CORRECTION_REQUIRED: 0,
+        REOPENED: 0
     });
 
 
@@ -95,6 +96,11 @@ function Dashboard() {
         navigate(
             "/tickets?status=CORRECTION_REQUIRED"
         );
+    }
+
+
+    function handleReopened() {
+    navigate("/tickets?status=REOPENED");
     }
 
 
@@ -233,6 +239,13 @@ function Dashboard() {
             animateNumber(
                 "CORRECTION_REQUIRED",
                 response.data.CORRECTION_REQUIRED || 0
+            );
+
+
+            // Animate reopened tickets
+            animateNumber(
+                "REOPENED",
+                response.data.REOPENED || 0
             );
 
         })
@@ -460,6 +473,28 @@ function Dashboard() {
                     </span>
 
                 </div>
+
+
+                {/* =================================
+    REOPENED TICKETS
+================================= */}
+
+<div
+    className="stat-card"
+    onClick={handleReopened}
+>
+    <h3>
+        Reopened Tickets
+    </h3>
+
+    <p>
+        {animatedStats.REOPENED}
+    </p>
+
+    <span>
+        View Tickets →
+    </span>
+</div>  
 
             </div>
 

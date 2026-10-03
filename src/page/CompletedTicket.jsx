@@ -169,6 +169,7 @@ useEffect(() => {
             >
                 Active Tickets
             </button>
+                
 
         </div>
 
@@ -289,6 +290,10 @@ useEffect(() => {
                             </th>
 
                             <th>
+                                Form Number
+                            </th>
+
+                            <th>
                                 Document Type
                             </th>
 
@@ -326,6 +331,11 @@ useEffect(() => {
                         {ticket.ticket_number}
                     </span>
                 </td>
+
+                <td>
+                    {ticket.form_number}
+                </td>
+                
 
                 <td>{ticket.document_type}</td>
 

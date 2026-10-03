@@ -121,6 +121,12 @@
     color: #dc2626;
 }
 
+.status-badge.reopened {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffe69c;
+}
+
 
 /* ================= MAIN CONTAINER ================= */
 
@@ -533,4 +539,56 @@
 
 .timeline-content strong {
     color: #374151;
+}
+
+
+/* Reopen Ticket */
+.reopen-ticket-button {
+    margin-left: 20px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 20px;
+    background-color: #dc3545;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reopen-ticket-button:hover {
+    background-color: #b02a37;
+    transform: translateY(-1px);
+}
+
+.reopen-ticket-button:active {
+    transform: translateY(0);
+}
+
+.reopen-reason-section {
+    margin-top: 20px;
+}
+
+.reopen-reason-box {
+    margin-top: 12px;
+    padding: 16px 18px;
+    border: 1px solid #ffe69c;
+    border-radius: 10px;
+    background: #fff9e6;
+}
+
+.reopen-reason-box strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #856404;
+}
+
+.reopen-reason-box p {
+    margin: 0 0 10px;
+    color: #333;
+    line-height: 1.5;
+}
+
+.reopen-reason-box small {
+    color: #777;
 }

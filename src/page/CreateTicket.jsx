@@ -471,7 +471,7 @@ function handleAddCorrection() {
                 </div>
             )}
 
-            {errMessage && (
+            {errorMessage && (
                 <div className="error-message">
                     ⚠ {errorMessage}
                 </div>
