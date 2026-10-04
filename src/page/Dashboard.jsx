@@ -129,28 +129,34 @@ function Dashboard() {
 
     function animateNumber(key, target) {
 
-        let current = 0;
+    target = Number(target);
 
-        const interval = setInterval(() => {
+    if (target === 0) {
+        setAnimatedStats((previous) => ({
+            ...previous,
+            [key]: 0
+        }));
 
-            current += 1;
-
-            setAnimatedStats((previous) => ({
-
-                ...previous,
-
-                [key]: current
-
-            }));
-
-
-            if (current >= target) {
-
-                clearInterval(interval);
-            }
-
-        }, 40);
+        return;
     }
+
+    let current = 0;
+
+    const interval = setInterval(() => {
+
+        current += 1;
+
+        setAnimatedStats((previous) => ({
+            ...previous,
+            [key]: current
+        }));
+
+        if (current >= target) {
+            clearInterval(interval);
+        }
+
+    }, 40);
+}
 
 
     // ================================
@@ -475,8 +481,8 @@ function Dashboard() {
                 </div>
 
 
-                {/* =================================
-    REOPENED TICKETS
+{/* =================================
+        REOPENED TICKETS
 ================================= */}
 
 <div

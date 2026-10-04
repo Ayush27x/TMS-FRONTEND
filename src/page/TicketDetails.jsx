@@ -392,30 +392,30 @@ function formatDateTime(dateTime) {
 
             });
 
-
-
     }, [id]);
 
 
-
-
-
     // =============================
-
     // LOADING STATE
-
     // =============================
-
-
 
     if (!ticket) {
+    return (
+        <div className="ticket-loading-page">
+            <div className="ticket-loading-box">
 
-        return <p>Loading...</p>;
+                <div className="ticket-spinner"></div>
 
-    }
+                <h2>Loading Ticket</h2>
 
+                <p>
+                    Please wait while we fetch the ticket details...
+                </p>
 
-
+            </div>
+        </div>
+    );
+}
 
 
     // Find the latest reopen history entry
@@ -433,13 +433,8 @@ function formatDateTime(dateTime) {
     console.log("Ticket ID : ", id);
 
 
-
-
-
     // =============================
-
     // JSX
-
     // =============================
 
 
