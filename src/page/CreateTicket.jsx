@@ -451,10 +451,47 @@ function handleAddCorrection() {
         <input
             type="file"
             accept="image/png, image/jpeg"
-            onChange={(e) =>
-                setFile(e.target.files[0])
-            }
+            onChange={(e) => {
+
+    const selectedFile = e.target.files[0];
+
+    if (!selectedFile) {
+        return;
+    }
+
+    const maxSize = 2 * 1024 * 1024; // 2 MB
+
+    if (selectedFile.size > maxSize) {
+
+        setFile(null);
+
+        setErrorMessage(
+            "File size must be less than 2 MB"
+        );
+
+        e.target.value = "";
+
+        return;
+    }
+
+    setErrorMessage("");
+
+    setFile(selectedFile);
+}}
         />
+
+        <p className="file-size-info">
+     Maximum size: 2 MB
+</p>
+
+{file && (
+    <p className="selected-file-info">
+
+         {file.name} - {" "}
+         
+        {(file.size / 1024).toFixed(1)} KB
+    </p>
+)}
 
     </label>
 
