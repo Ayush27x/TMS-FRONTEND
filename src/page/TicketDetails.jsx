@@ -68,6 +68,10 @@ function TicketDetails() {
     const [errorMessage, setErrorMessage] = useState("");
 
 
+    //Reopen ticket Loading
+    const [reopeningTicket, setReopeningTicket] = useState(false);
+
+
 
     // =============================
     // FORMAT DATE & TIME
@@ -149,6 +153,8 @@ function formatDateTime(dateTime) {
         return;
     }
 
+    setReopeningTicket(true);
+
     try {
         const token = localStorage.getItem("token");
 
@@ -177,6 +183,10 @@ function formatDateTime(dateTime) {
             error.response?.data?.message ||
             "Failed to reopen ticket"
         );
+    }
+
+    finally {
+        setReopeningTicket(false);
     }
 };
 
@@ -399,7 +409,7 @@ function formatDateTime(dateTime) {
     // LOADING STATE
     // =============================
 
-    if (!ticket) {
+ if (!ticket && !errorMessage) {
     return (
         <div className="ticket-loading-page">
             <div className="ticket-loading-box">
@@ -411,6 +421,33 @@ function formatDateTime(dateTime) {
                 <p>
                     Please wait while we fetch the ticket details...
                 </p>
+
+            </div>
+        </div>
+    );
+}
+
+if (errorMessage) {
+    return (
+        <div className="ticket-loading-page">
+            <div className="ticket-error-box">
+
+                <div className="ticket-error-icon">
+                    ⚠
+                </div>
+
+                <h2>Ticket Not Found</h2>
+
+                <p>
+                    {errorMessage}
+                </p>
+
+                <button
+                    className="back-to-tickets-button"
+                    onClick={() => navigate("/tickets")}
+                >
+                    ← Back to Tickets
+                </button>
 
             </div>
         </div>
@@ -450,116 +487,74 @@ function formatDateTime(dateTime) {
 
 
             {/* =================================
-
                 HEADER
-
             ================================= */}
-
-
 
             <div className="ticket-details-header">
 
-
-
                 <div className="ticket-header-left">
 
-
-
                     {/* Back Button */}
-
                     <button
 
                         className="back-button"
-
                         onClick={() => window.history.back()}
-
                     >
-
                         ← Back
-
                     </button>
 
                     <button
-
                         className="back-button"
-
                         onClick={(() => navigate("/dashboard"))}
-
                     >
-
                         Dashboard
-
                     </button>
-
-
-
 
 
                     {/* Page Title */}
-
                     <div>
 
-
-
                         <h1>
-
                             Ticket Details
-
                         </h1>
 
-
-
                         <p>
-
                             Ticket #{ticket.ticket_number}
-
                         </p>
-
-
 
                     </div>
 
-
-
                 </div>
-
-
-
 
 
                 {/* Current Ticket Status */}
 
-                <div
+                <div className="ticket-header-right">
 
-                    className={`status-badge ${ticket.status.toLowerCase()}`}
+    <div className="ticket-status-area">
 
-                >
+        <div
+            className={`status-badge ${ticket.status.toLowerCase()}`}
+        >
+            {ticket.status}
+        </div>
 
-                    {ticket.status}
+    </div>
 
+    {userRole === "UNIVERSITY" &&
+        ticket.status === "COMPLETED" && (
+            <button
+                className="reopen-ticket-button"
+                onClick={handleReopenTicket}
+                disabled={reopeningTicket}
+            >
+                {reopeningTicket
+                    ? "Reopening..."
+                    : "Reopen Ticket"}
+            </button>
+        )}
 
-
-                </div>
-
-
-
-                {userRole === "UNIVERSITY" &&
-
-                    ticket.status === "COMPLETED" && (
-
-                        <button 
-
-                        className="reopen-ticket-button"
-
-                        onClick={handleReopenTicket}
-
-                        >
-
-                            Reopen Ticket
-
-                        </button>
-
-                )}
+</div>
 
 
 
