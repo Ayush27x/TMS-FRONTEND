@@ -858,3 +858,43 @@
 
     transform: translateY(-1px);
 }
+
+
+/* =================================
+   CORRECTION REQUIRED
+================================= */
+
+.correction-required-section {
+    margin-top: 20px;
+}
+
+.correction-required-section h2 {
+    color: #b45309;
+}
+
+.correction-required-box {
+    padding: 16px 18px;
+    border: 1px solid #f5d08a;
+    border-left: 4px solid #f59e0b;
+    border-radius: 10px;
+    background: #fffbeb;
+}
+
+.correction-required-box strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #92400e;
+    font-size: 13px;
+}
+
+.correction-required-box p {
+    margin: 0 0 10px;
+    color: #374151;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.correction-required-box small {
+    color: #6b7280;
+    font-size: 12px;
+}

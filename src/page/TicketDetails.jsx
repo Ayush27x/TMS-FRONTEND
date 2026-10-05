@@ -355,19 +355,10 @@ function formatDateTime(dateTime) {
             });
 
 
-
-
-
         // =============================
-
         // ATTACHMENT API
-
         // =============================
-
-
-
         axios.get(
-
             `http://localhost:5200/api/tickets/${id}/attachment`,
 
             {
@@ -377,31 +368,18 @@ function formatDateTime(dateTime) {
                     Authorization: `Bearer ${token}`
 
                 }
-
             }
-
         )
-
             .then((response) => {
 
-
-
                 console.log(
-
                     "Attachment : ",
-
                     response.data
-
                 );
 
-
-
                 // Store attachment information
-
                 setAttachment(response.data);
-
             });
-
     }, [id]);
 
 
@@ -465,6 +443,15 @@ if (errorMessage) {
         );
 
 
+    const correctionHistory = [...history]
+        .reverse()
+        .find(
+            (item) =>
+                item.new_status === "CORRECTION_REQUIRED" &&
+                item.remark
+        );
+
+
     // Check ticket ID in console
 
     console.log("Ticket ID : ", id);
@@ -473,17 +460,9 @@ if (errorMessage) {
     // =============================
     // JSX
     // =============================
-
-
-
     return (
 
-
-
         <div className="ticket-details-page">
-
-
-
 
 
             {/* =================================
@@ -531,17 +510,19 @@ if (errorMessage) {
 
                 <div className="ticket-header-right">
 
-    <div className="ticket-status-area">
+                    <div className="ticket-status-area">
 
-        <div
-            className={`status-badge ${ticket.status.toLowerCase()}`}
-        >
-            {ticket.status}
-        </div>
+                        <div
+                            className={`status-badge ${ticket.status.toLowerCase()}`}
+                        >
+                            {ticket.status}
+                        </div>
 
-    </div>
+                    </div>
 
-    {userRole === "UNIVERSITY" &&
+
+        //Reopen Ticket
+        {userRole === "UNIVERSITY" &&
         ticket.status === "COMPLETED" && (
             <button
                 className="reopen-ticket-button"
@@ -556,173 +537,82 @@ if (errorMessage) {
 
 </div>
 
-
-
             </div>
 
-
-
-
-
             {/* =================================
-
                 MAIN CONTAINER
-
             ================================= */}
-
-
 
             <div className="ticket-details-container">
 
 
-
-
-
                 {/* =================================
-
                     TICKET INFORMATION
-
                 ================================= */}
 
-
-
                 <div className="ticket-section">
-
-
-
                     <h2>
-
                         Ticket Information
-
                     </h2>
-
-
-
-
 
                     <div className="ticket-info-grid">
 
-
-
-
-
                         {/* Ticket ID */}
-
                         <div className="info-item">
-
-
-
                             <span>
-
                                 Ticket ID
-
                             </span>
 
-
-
                             <strong>
-
                                 {ticket.id}
-
                             </strong>
 
-
-
                         </div>
-
-
-
 
 
                         {/* Ticket Number */}
-
                         <div className="info-item">
-
-
-
                             <span>
-
                                 Ticket Number
-
                             </span>
 
-
-
                             <strong>
-
                                 {ticket.ticket_number}
-
                             </strong>
 
-
-
                         </div>
-
-
-
 
 
                         {/* Form Number */}
-
                         <div className="info-item">
 
-
-
                             <span>
-
                                 Form Number
-
                             </span>
 
-
-
                             <strong>
-
                                 {ticket.form_number}
-
                             </strong>
 
-
-
                         </div>
-
-
-
 
 
                         {/* Document Type */}
-
                         <div className="info-item">
 
-
-
                             <span>
-
                                 Document Type
-
                             </span>
 
-
-
                             <strong>
-
                                 {ticket.document_type}
-
                             </strong>
-
-
 
                         </div>
 
 
-
-
-
                         {/* Created Date */}
-
                         <div className="info-item">
-
-
 
                             <span>Created At</span>
 
@@ -731,64 +621,40 @@ if (errorMessage) {
                         </div>
 
 
-
-
-
                         {/* Last Updated Date */}
-
                         <div className="info-item">
 
-    <span>Last Updated</span>
+                            <span>Last Updated</span>
 
-    <strong>{formatDateTime(ticket.updated_at)}</strong>
+                                <strong>{formatDateTime(ticket.updated_at)}</strong>
 
-</div>
-
-
+                        </div>
 
                     </div>
-
-
 
                 </div>
 
 
-
-
-
-                {/* =================================
-
+                {/* ===============================
                     REOPEN REASON
-
                 ================================= */}
-
-
-
                 {reopenHistory && (
-
                     <div className="ticket-section reopen-reason-section">
 
                         <h2>
-
                             Reopen Reason
-
                         </h2>
 
                         <div className="reopen-reason-box">
 
                             <strong>Reason:</strong>
-
                             <p>
-
                                 {reopenHistory.remark}
-
                             </p>
 
                             <small>
-
                                 Reopened on:{" "}
                                 {formatDateTime(reopenHistory.created_at)}
-
                             </small>
 
                         </div>
@@ -797,566 +663,311 @@ if (errorMessage) {
                 )}
 
 
+                // Correction Required Remark
+                {ticket.status === "CORRECTION_REQUIRED" && correctionHistory && (
 
-                {/* =================================
-
-                    STATUS UPDATE
-
-                    Only visible to OPERATOR
-
-                ================================= */}
-
-
-
-                {userRole === "OPERATOR" && (
-
-
-
-                    <div className="ticket-section">
-
-
+                    <div className="ticket-section correction-required-section">
 
                         <h2>
-
-                            Update Ticket Status
-
+                            Correction Required
                         </h2>
 
+                    <div className="correction-required-box">
 
+                        <strong>Operator Remark:</strong>
 
+                            <p>
+                                {correctionHistory.remark}
+                            </p>
 
+                        <small>
 
-                        {/* Success Message */}
+                            Requested on:{" "}
+                            {formatDateTime(correctionHistory.created_at)}
 
-                        {successMessage && (
-
-
-
-                            <div className="success-message">
-
-
-
-                                ✓ {successMessage}
-
-
-
-                            </div>
-
-
-
-                        )}
-
-
-
-
-
-                        {/* Error Message */}
-
-                        {errorMessage && (
-
-
-
-                            <div className="error-message">
-
-
-
-                                ⚠ {errorMessage}
-
-
-
-                            </div>
-
-
-
-                        )}
-
-
-
-
-
-                        <div className="status-update-form">
-
-
-
-
-
-                            {/* Status Dropdown */}
-
-                            <div className="form-group">
-
-
-
-                                <label>
-
-                                    Status
-
-                                </label>
-
-
-
-
-
-                                <select
-
-                                    value={newStatus}
-
-                                    onChange={(e) =>
-
-                                        setNewStatus(
-
-                                            e.target.value
-
-                                        )
-
-                                    }
-
-                                >
-
-
-
-                                    <option value="">
-
-                                        Select Status
-
-                                    </option>
-
-
-
-
-
-                                    <option value="NEW">
-
-                                        NEW
-
-                                    </option>
-
-
-
-
-
-                                    <option value="IN_PROGRESS">
-
-                                        IN PROGRESS
-
-                                    </option>
-
-
-
-
-
-                                    <option value="COMPLETED">
-
-                                        COMPLETED
-
-                                    </option>
-
-
-
-
-
-                                    <option value="CORRECTION_REQUIRED">
-
-                                        CORRECTION REQUIRED
-
-                                    </option>
-
-
-
-                                </select>
-
-
-
-                            </div>
-
-
-
-
-
-                            {/* Correction Remark */}
-
-                            {newStatus === "CORRECTION_REQUIRED" && (
-
-
-
-                                <div className="form-group">
-
-
-
-                                    <label>
-
-                                        Remark
-
-                                    </label>
-
-
-
-
-
-                                    <textarea
-
-                                        value={remark}
-
-                                        onChange={(e) =>
-
-                                            setRemark(
-
-                                                e.target.value
-
-                                            )
-
-                                        }
-
-                                        placeholder="Enter correction remark"
-
-                                    />
-
-
-
-                                </div>
-
-
-
-                            )}
-
-
-
-
-
-                            {/* Update Status Button */}
-
-                            <button
-
-                                className="update-status-button"
-
-                                onClick={handleStatusUpdate}
-
-                                disabled={updatingStatus}
-
-                            >
-
-
-
-                                {updatingStatus
-
-                                    ? "Updating..."
-
-                                    : "Update Status"
-
-                                }
-
-
-
-                            </button>
-
-
-
-                        </div>
-
-
+                        </small>
 
                     </div>
 
-
+                </div>
 
                 )}
 
 
+                {/* =================================
+                    STATUS UPDATE
+                    Only visible to OPERATOR
+                ================================= */}
 
+                {userRole === "OPERATOR" && (
+
+                    <div className="ticket-section">
+
+                        <h2>
+                            Update Ticket Status
+                        </h2>
+
+
+                        {/* Success Message */}
+                        {successMessage && (
+
+                            <div className="success-message">
+
+                                ✓ {successMessage}
+
+                            </div>
+
+                        )}
+
+
+                        {/* Error Message */}
+                        {errorMessage && (
+
+                            <div className="error-message">
+
+                                ⚠ {errorMessage}
+
+                            </div>
+
+                        )}
+
+
+                        <div className="status-update-form">
+
+                            {/* Status Dropdown */}
+                            <div className="form-group">
+
+                                <label>
+                                    Status
+                                </label>
+
+                                <select
+                                    value={newStatus}
+                                    onChange={(e) =>
+                                        setNewStatus(
+                                            e.target.value
+                                        )
+                                    }
+                                >
+
+                                    <option value="">
+                                        Select Status
+                                    </option>
+
+
+                                    <option value="NEW">
+                                        NEW
+                                    </option>
+
+
+                                    <option value="IN_PROGRESS">
+                                        IN PROGRESS
+                                    </option>
+
+
+                                    <option value="COMPLETED">
+                                        COMPLETED
+                                    </option>
+
+
+                                    <option value="CORRECTION_REQUIRED">
+                                        CORRECTION REQUIRED
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            {/* Correction Remark */}
+                            {newStatus === "CORRECTION_REQUIRED" && (
+
+                                <div className="form-group">
+
+                                    <label>
+                                        Remark
+                                    </label>
+
+                                    <textarea
+                                        value={remark}
+                                        onChange={(e) =>
+                                            setRemark(
+                                                e.target.value
+                                            )
+                                        }
+                                        placeholder="Enter correction remark"
+                                    />
+
+                                </div>
+
+                            )}
+
+
+                            {/* Update Status Button */}
+                            <button
+                                className="update-status-button"
+                                onClick={handleStatusUpdate}
+                                disabled={updatingStatus}
+                            >
+
+                                {updatingStatus
+                                    ? "Updating..."
+                                    : "Update Status"
+                                }
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                )}
 
 
                 {/* =================================
-
                     CORRECTIONS
-
                 ================================= */}
-
-
 
                 <div className="ticket-section">
 
-
-
                     <h2>
-
                         Corrections
-
                     </h2>
 
 
-
-
-
                     {ticket.corrections &&
-
                     ticket.corrections.length > 0 ? (
-
-
 
                         <div className="corrections-list">
 
-
-
                             {ticket.corrections.map(
-
                                 (correction, index) => (
 
-
-
                                     <div
-
                                         className="detail-correction-card"
-
                                         key={correction.id}
-
                                     >
 
-
-
-
-
                                         {/* Correction Number */}
-
                                         <div className="correction-number">
-
-
 
                                             {index + 1}
 
-
-
                                         </div>
-
-
-
 
 
                                         {/* Correction Details */}
-
                                         <div className="correction-content">
 
-
-
                                             <h3>
-
                                                 {correction.correction_type}
-
                                             </h3>
 
-
-
                                             <p>
-
                                                 {correction.correction_details}
-
                                             </p>
-
-
 
                                         </div>
 
-
-
                                     </div>
-
-
 
                                 )
 
                             )}
 
-
-
                         </div>
-
-
 
                     ) : (
 
-
-
                         <p className="empty-message">
-
                             No corrections found.
-
                         </p>
 
-
-
                     )}
-
-
 
                 </div>
 
 
-
-
-
                 {/* =================================
-
                     MARKSHEET / ATTACHMENT
-
                 ================================= */}
-
-
-
                 <div className="ticket-section">
 
-
-
                     <h2>
-
                         Marksheet
-
                     </h2>
 
-
-
-
-
                     {/* 
-
                         Only OPERATOR can upload.
-
                         UNIVERSITY can only view the attachment.
-
                     */}
-
 
 
                     {userRole === "OPERATOR" && (
 
-
-
                         <div className="attachment-upload">
 
-
-
                             {/* File Selection */}
-
                             <input
-
                                 type="file"
-
                                 accept="image/png, image/jpeg"
-
                                 onChange={(e) =>
-
                                     setFile(
-
                                         e.target.files[0]
-
                                     )
-
                                 }
-
                             />
-
-
-
 
 
                             {/* Upload Button */}
-
                             <button
-
                                 className="upload-button"
-
                                 onClick={handleUpload}
-
                             >
-
                                 Upload
-
                             </button>
-
-
 
                         </div>
 
-
-
                     )}
-
-
-
 
 
                     {/* Display Uploaded Marksheet */}
-
                     {attachment ? (
-
-
 
                         <div className="attachment-preview">
 
-
-
                             <p>
 
-
-
                                 <strong>
-
                                     File:
-
                                 </strong>{" "}
-
-
 
                                 {attachment.file_name}
 
-
-
                             </p>
 
-
-
-
-
                             <img
-
                                 src={`http://localhost:5200/${attachment.file_path}`}
-
                                 alt="Uploaded marksheet"
-
                             />
-
-
 
                         </div>
 
-
-
                     ) : (
 
-
-
                         <p className="empty-message">
-
                             No marksheet uploaded.
-
                         </p>
 
-
-
                     )}
-
-
 
                 </div>
 
 
-
-
-
                 {/* =================================
-
                     TICKET HISTORY
-
                 ================================= */}
-
-
 
                 <div className="ticket-section">
 
@@ -1371,15 +982,10 @@ if (errorMessage) {
 
                             {history.map((item) => (
 
-
-
                                 <div
-
                                     className="timeline-item"
-
                                     key={item.id}
                                 >
-
 
                                     {/* Timeline Dot */}
                                     <div className="timeline-dot"></div>
@@ -1388,87 +994,44 @@ if (errorMessage) {
                                     {/* Timeline Content */}
                                     <div className="timeline-content">
 
-
-
-
-
                                         {/* Status Change */}
-
                                         <div className="timeline-status">
-
-
 
                                             {item.old_status}
 
-
-
                                             {" → "}
-
-
 
                                             {item.new_status}
 
-
-
                                         </div>
 
-
-
-
-
                                         {/* Action */}
-
                                         <p>
-
-
-
                                             <strong>
 
                                                 Action:
 
                                             </strong>{" "}
 
-
-
                                             {item.action}
 
-
-
                                         </p>
-
-
-
 
 
                                         {/* Changed By */}
-
                                         <p>
 
-
-
                                             <strong>
-
                                                 Changed By:
-
                                             </strong>{" "}
 
-
-
                                             {item.changed_by}
-
-
 
                                         </p>
 
 
-
-
-
                                         {/* Date */}
-
                                         <p>
-
-
 
                                             <strong>
                                                 Date: 
@@ -1476,83 +1039,43 @@ if (errorMessage) {
 
                                             <strong> {formatDateTime(ticket.created_at)}</strong>
 
-
-
                                         </p>
 
 
-
-
-
                                         {/* Remark */}
-
                                         {item.remark && (
-
-
 
                                             <p>
 
-
-
                                                 <strong>
-
                                                     Remark:
-
                                                 </strong>{" "}
-
-
 
                                                 {item.remark}
 
-
-
                                             </p>
-
-
 
                                         )}
 
-
-
                                     </div>
-
-
 
                                 </div>
 
-
-
                             ))}
-
-
 
                         </div>
 
-
-
                     ) : (
 
-
-
                         <p className="empty-message">
-
                             No history available.
-
                         </p>
-
-
 
                     )}
 
-
-
                 </div>
 
-
-
             </div>
-
-
 
         </div>
 
@@ -1562,14 +1085,8 @@ if (errorMessage) {
 
 
 
-
-
 // =============================
-
 // EXPORT COMPONENT
-
 // =============================
-
-
 
 export default TicketDetails;
