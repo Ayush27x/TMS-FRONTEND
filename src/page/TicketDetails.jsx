@@ -72,6 +72,19 @@ function TicketDetails() {
     const [reopeningTicket, setReopeningTicket] = useState(false);
 
 
+    const [editingDetails, setEditingDetails] = useState(false);
+
+const [editFormNumber, setEditFormNumber] = useState("");
+const [editDocumentType, setEditDocumentType] = useState("");
+const [editCorrections, setEditCorrections] = useState([]);
+
+const [savingDetails, setSavingDetails] = useState(false);
+
+
+const [newCorrectionType, setNewCorrectionType] = useState("");
+const [newCorrectionDetails, setNewCorrectionDetails] = useState("");
+
+
 
     // =============================
     // FORMAT DATE & TIME
@@ -138,6 +151,86 @@ function formatDateTime(dateTime) {
     }
 
 
+    const handleEditDetails = () => {
+
+    setEditFormNumber(ticket.form_number);
+    setEditDocumentType(ticket.document_type);
+
+    setEditCorrections(
+        ticket.corrections
+            ? ticket.corrections.map((correction) => ({
+                  correction_type: correction.correction_type,
+                  correction_details: correction.correction_details
+              }))
+            : []
+    );
+
+    setEditingDetails(true);
+};
+
+
+const handleSaveDetails = async () => {
+
+    if (!editFormNumber.trim()) {
+        alert("Form number is required");
+        return;
+    }
+
+    if (!editDocumentType.trim()) {
+        alert("Document type is required");
+        return;
+    }
+
+    if (editCorrections.length === 0) {
+        alert("At least one correction is required");
+        return;
+    }
+
+    try {
+
+        setSavingDetails(true);
+
+        const token = localStorage.getItem("token");
+
+        await axios.put(
+            `http://localhost:5200/api/tickets/${id}/correction`,
+            {
+                form_number: editFormNumber,
+                document_type: editDocumentType,
+                corrections: editCorrections
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        alert("Details updated successfully");
+
+        setEditingDetails(false);
+
+        window.location.reload();
+
+    } catch (error) {
+
+        console.error(
+            "Update details error:",
+            error
+        );
+
+        alert(
+            error.response?.data?.message ||
+            "Failed to update details"
+        );
+
+    } finally {
+
+        setSavingDetails(false);
+    }
+};
+
+
     // =============================
     // HANDLE REOPEN
     // =============================
@@ -187,6 +280,50 @@ function formatDateTime(dateTime) {
 
     finally {
         setReopeningTicket(false);
+    }
+};
+
+
+const handleSubmitCorrection = async () => {
+
+    const confirmSubmit = window.confirm(
+    "Are you sure you want to submit this correction? The ticket will move to IN_PROGRESS."
+);
+
+if (!confirmSubmit) {
+    return;
+}
+
+
+    try {
+
+        const token = localStorage.getItem("token");
+
+        await axios.post(
+            `http://localhost:5200/api/tickets/${id}/submit-correction`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        alert("Correction submitted successfully");
+
+        window.location.reload();
+
+    } catch (error) {
+
+        console.error(
+            "Submit correction error:",
+            error
+        );
+
+        alert(
+            error.response?.data?.message ||
+            "Failed to submit correction"
+        );
     }
 };
 
@@ -521,7 +658,7 @@ if (errorMessage) {
                     </div>
 
 
-        //Reopen Ticket
+        {/* //Reopen Ticket */}
         {userRole === "UNIVERSITY" &&
         ticket.status === "COMPLETED" && (
             <button
@@ -554,6 +691,16 @@ if (errorMessage) {
                     <h2>
                         Ticket Information
                     </h2>
+
+                    {userRole === "UNIVERSITY" &&
+    ticket.status === "CORRECTION_REQUIRED" && (
+        <button
+            className="edit-details-button"
+            onClick={handleEditDetails}
+        >
+            Edit Details
+        </button>
+)}
 
                     <div className="ticket-info-grid">
 
@@ -590,9 +737,19 @@ if (errorMessage) {
                                 Form Number
                             </span>
 
-                            <strong>
-                                {ticket.form_number}
-                            </strong>
+                            {editingDetails ? (
+    <input
+        type="text"
+        value={editFormNumber}
+        onChange={(e) =>
+            setEditFormNumber(e.target.value)
+        }
+    />
+) : (
+    <strong>
+        {ticket.form_number}
+    </strong>
+)}
 
                         </div>
 
@@ -604,10 +761,19 @@ if (errorMessage) {
                                 Document Type
                             </span>
 
-                            <strong>
-                                {ticket.document_type}
-                            </strong>
-
+                          {editingDetails ? (
+    <input
+        type="text"
+        value={editDocumentType}
+        onChange={(e) =>
+            setEditDocumentType(e.target.value)
+        }
+    />
+) : (
+    <strong>
+        {ticket.document_type}
+    </strong>
+)}
                         </div>
 
 
@@ -633,6 +799,7 @@ if (errorMessage) {
                     </div>
 
                 </div>
+
 
 
                 {/* ===============================
@@ -663,7 +830,7 @@ if (errorMessage) {
                 )}
 
 
-                // Correction Required Remark
+                {/* // Correction Required Remark */}
                 {ticket.status === "CORRECTION_REQUIRED" && correctionHistory && (
 
                     <div className="ticket-section correction-required-section">
@@ -853,23 +1020,85 @@ if (errorMessage) {
 
                                             {index + 1}
 
+
                                         </div>
 
 
-                                        {/* Correction Details */}
                                         <div className="correction-content">
 
-                                            <h3>
-                                                {correction.correction_type}
-                                            </h3>
+    {editingDetails ? (
+        <>
+            <input
+                type="text"
+                value={editCorrections[index]?.correction_type || ""}
+                onChange={(e) => {
+                    const updatedCorrections = [
+                        ...editCorrections
+                    ];
 
-                                            <p>
-                                                {correction.correction_details}
-                                            </p>
+                    updatedCorrections[index] = {
+                        ...updatedCorrections[index],
+                        correction_type: e.target.value
+                    };
 
-                                        </div>
+                    setEditCorrections(updatedCorrections);
+                }}
+                placeholder="Correction type"
+            />
+
+            <textarea
+                value={
+                    editCorrections[index]?.correction_details || ""
+                }
+                onChange={(e) => {
+                    const updatedCorrections = [
+                        ...editCorrections
+                    ];
+
+                    updatedCorrections[index] = {
+                        ...updatedCorrections[index],
+                        correction_details: e.target.value
+                    };
+
+                    setEditCorrections(updatedCorrections);
+                }}
+                placeholder="Correction details"
+            />
+        </>
+    ) : (
+        <>
+            <h3>
+                {correction.correction_type}
+            </h3>
+
+            <p>
+                {correction.correction_details}
+            </p>
+        </>
+    )}
+
+</div>
+
+{editingDetails && (
+    <button
+        type="button"
+        className="delete-correction-button"
+        onClick={() => {
+            const updatedCorrections =
+                editCorrections.filter(
+                    (_, correctionIndex) =>
+                        correctionIndex !== index
+                );
+
+            setEditCorrections(updatedCorrections);
+        }}
+    >
+        Delete
+    </button>
+)}
 
                                     </div>
+
 
                                 )
 
@@ -884,6 +1113,89 @@ if (errorMessage) {
                         </p>
 
                     )}
+
+
+                    {editingDetails && (
+    <div className="add-correction-box">
+
+        <input
+            type="text"
+            value={newCorrectionType}
+            onChange={(e) =>
+                setNewCorrectionType(e.target.value)
+            }
+            placeholder="Correction type"
+        />
+
+        <textarea
+            value={newCorrectionDetails}
+            onChange={(e) =>
+                setNewCorrectionDetails(e.target.value)
+            }
+            placeholder="Correction details"
+        />
+
+        <button
+            type="button"
+            className="add-correction-button"
+            onClick={() => {
+
+                if (
+                    !newCorrectionType.trim() ||
+                    !newCorrectionDetails.trim()
+                ) {
+                    alert("Please enter correction details");
+                    return;
+                }
+
+                setEditCorrections([
+                    ...editCorrections,
+                    {
+                        correction_type:
+                            newCorrectionType.trim(),
+
+                        correction_details:
+                            newCorrectionDetails.trim()
+                    }
+                ]);
+
+                setNewCorrectionType("");
+                setNewCorrectionDetails("");
+            }}
+        >
+            + Add Correction
+        </button>
+
+    </div>
+)}
+
+
+{editingDetails && (
+    <button
+        type="button"
+        className="save-details-button"
+        onClick={handleSaveDetails}
+        disabled={savingDetails}
+    >
+        {savingDetails
+            ? "Saving..."
+            : "Save Changes"}
+    </button>
+)}
+
+{editingDetails && (
+    <button
+        type="button"
+        className="cancel-edit-button"
+        onClick={() => {
+            setEditingDetails(false);
+            setNewCorrectionType("");
+            setNewCorrectionDetails("");
+        }}
+    >
+        Cancel
+    </button>
+)}
 
                 </div>
 
@@ -904,32 +1216,57 @@ if (errorMessage) {
 
 
                     {userRole === "OPERATOR" && (
+    <div className="attachment-upload">
 
-                        <div className="attachment-upload">
+        <input
+            type="file"
+            accept="image/png, image/jpeg"
+            onChange={(e) =>
+                setFile(e.target.files[0])
+            }
+        />
 
-                            {/* File Selection */}
-                            <input
-                                type="file"
-                                accept="image/png, image/jpeg"
-                                onChange={(e) =>
-                                    setFile(
-                                        e.target.files[0]
-                                    )
-                                }
-                            />
+        <button
+            className="upload-button"
+            onClick={handleUpload}
+        >
+            Upload
+        </button>
 
+    </div>
+)}
 
-                            {/* Upload Button */}
-                            <button
-                                className="upload-button"
-                                onClick={handleUpload}
-                            >
-                                Upload
-                            </button>
+{userRole === "UNIVERSITY" &&
+    ticket.status === "CORRECTION_REQUIRED" && (
+        <div className="attachment-upload">
 
-                        </div>
+            <input
+                type="file"
+                accept="image/png, image/jpeg"
+                onChange={(e) =>
+                    setFile(e.target.files[0])
+                }
+            />
 
-                    )}
+            <button
+                className="upload-button"
+                onClick={handleUpload}
+            >
+                Replace Marksheet
+            </button>
+
+        </div>
+)}
+
+{userRole === "UNIVERSITY" &&
+    ticket.status === "CORRECTION_REQUIRED" && (
+        <button
+            className="submit-correction-button"
+            onClick={handleSubmitCorrection}
+        >
+            Submit Correction
+        </button>
+)}
 
 
                     {/* Display Uploaded Marksheet */}

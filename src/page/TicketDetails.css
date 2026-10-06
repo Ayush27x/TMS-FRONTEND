@@ -898,3 +898,229 @@
     color: #6b7280;
     font-size: 12px;
 }
+
+/* =================================
+   EDIT DETAILS
+================================= */
+
+.edit-details-button {
+    margin-left: 12px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 7px;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+    margin-bottom:20px
+}
+
+.edit-details-button:hover {
+    background: #1d4ed8;
+}
+
+
+/* =================================
+   EDIT INPUTS
+================================= */
+
+.info-item input,
+.info-item select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 11px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #1f2937;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.info-item input:focus,
+.info-item select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+
+/* =================================
+   CORRECTION EDIT
+================================= */
+
+.correction-content input,
+.correction-content textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #1f2937;
+    font-size: 14px;
+    outline: none;
+    font-family: inherit;
+    transition: 0.2s ease;
+}
+
+.correction-content textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.correction-content input:focus,
+.correction-content textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+
+/* =================================
+   DELETE CORRECTION
+================================= */
+
+.delete-correction-button {
+    margin-top: 8px;
+    padding: 7px 13px;
+    border: 1px solid #dc2626;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #dc2626;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.delete-correction-button:hover {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+
+/* =================================
+   ADD CORRECTION
+================================= */
+
+.add-correction-box {
+    margin-top: 18px;
+    padding: 16px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 9px;
+    background: #f8fafc;
+}
+
+.add-correction-box input,
+.add-correction-box textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #1f2937;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+}
+
+.add-correction-box textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.add-correction-box input:focus,
+.add-correction-box textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.add-correction-button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 7px;
+    background: #16a34a;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.add-correction-button:hover {
+    background: #15803d;
+}
+
+
+/* =================================
+   SAVE / CANCEL
+================================= */
+
+.save-details-button,
+.cancel-edit-button {
+    margin-top: 18px;
+    padding: 9px 18px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.save-details-button {
+    margin-right: 10px;
+    border: none;
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.save-details-button:hover {
+    background: #1d4ed8;
+}
+
+.save-details-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.cancel-edit-button {
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #374151;
+}
+
+.cancel-edit-button:hover {
+    background: #f3f4f6;
+}
+
+
+/* =================================
+   SUBMIT CORRECTION
+================================= */
+
+.submit-correction-button {
+    margin-top: 16px;
+    width: 100%;
+    padding: 11px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #16a34a;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.submit-correction-button:hover {
+    background: #15803d;
+}
+
+.submit-correction-button:active {
+    transform: scale(0.98);
+}
